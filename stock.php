@@ -2,8 +2,8 @@
 /**
  * Name:        Stock
  * Author:        weixinchen(weixinchen@tencent.com) | Shjlone
- * Revised:    13/10/2015
- * Version:        0.1
+ * Revised:    13/10/2022
+ * Version:        0.2
  */
 require_once("workflows.php");
 require_once("filecache.php");
@@ -20,9 +20,12 @@ class SmartBox extends Workflows
         $this->keyword = $keyword;
     }
 
+
     function search()
     {
+        
         $keywordArr = explode(' ', $this->keyword);
+        
         if (in_array($keywordArr[0], ['add', 'list', 'remove'])) {
             $key = $keywordArr[0];
             if(isset($keywordArr[1])) {
@@ -45,14 +48,14 @@ class SmartBox extends Workflows
                             $cacheData[$code][] = $dCode;
                         }
                     }
-
+                    
                     FileCache::set('__self_select_stock__', $cacheData, 0, $this->cacheDir);
                     $this->result(0, '', '添加成功', null, null);
                     break;
                 case 'list':
                     $cacheData = FileCache::get('__self_select_stock__', $this->cacheDir);
                     $param = [];
-                    $searchData = [];
+                    $searchData = [];                    
                     foreach ($cacheData as $key => $value) {
                         if(is_array($value)) {
                             foreach ($value as $k => $v) {
@@ -69,7 +72,7 @@ class SmartBox extends Workflows
                     foreach ($searchData as $key => $value) {
                         $stock = new Stock($value, $qt);
                         $this->result($key, $stock->getLink(), $stock->getTitle(), $stock->getSubTitle(), null);
-
+                        
                     }
                     return;
                     break;
@@ -93,9 +96,12 @@ class SmartBox extends Workflows
 
         if (!$cacheData) {
             $url = $this->queryUrl . urlencode($this->keyword);
+
             $request_result = $this->request($url);
+
             $json = json_decode($request_result);
             $searchData = $json->data;
+
             if (count($searchData) > 0) {
                 FileCache::set('__cache__' . $this->keyword, $searchData, 24 * 60 * 60);
             }
@@ -104,7 +110,9 @@ class SmartBox extends Workflows
         }
 
         if (count($searchData) > 0) {
+
             $codeArray = array();
+
             foreach ($searchData as $value) {
                 $dCode = $this->getCode($value);
                 array_push($codeArray, $dCode);
@@ -188,16 +196,16 @@ class Stock
             switch ($this->market) {
                 case 'sh':
                 case 'sz':
-                    $this->qt = new QT($qtData, $this->market, $this->category);
+                    $this->qt = new QT($this->market, $this->category, $qtData);
                     break;
                 case 'hk':
-                    $this->qt = new QTHk($qtData, $this->market, $this->category);
+                    $this->qt = new QTHk($this->market, $this->category, $qtData);
                     break;
                 case 'us':
-                    $this->qt = new QTUs($qtData, $this->market, $this->category);
+                    $this->qt = new QTUs($this->market, $this->category, $qtData);
                     break;
                 case 'jj':
-                    $this->qt = new QTJj($qtData, $this->market, $this->category);
+                    $this->qt = new QTJj($this->market, $this->category, $qtData);
                     break;
             }
         }

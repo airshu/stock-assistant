@@ -194,13 +194,13 @@ class Workflows {
 						$c->addAttribute( 'valid', $b[$key] );
 					endif;
 				elseif ( $key == 'autocomplete' ):
-					$c->addAttribute( 'autocomplete', $b[$key] );
+					$c->addAttribute( 'autocomplete', $b[$key] ?? "");
 				elseif ( $key == 'icon' ):
-					if ( substr( $b[$key], 0, 9 ) == 'fileicon:' ):
+					if ( !is_null($b[$key]) && substr( $b[$key], 0, 9 ) == 'fileicon:' ):
 						$val = substr( $b[$key], 9 );
 						$c->$key = $val;
 						$c->$key->addAttribute( 'type', 'fileicon' );
-					elseif ( substr( $b[$key], 0, 9 ) == 'filetype:' ):
+					elseif ( !is_null($b[$key]) && substr( $b[$key], 0, 9 ) == 'filetype:' ):
 						$val = substr( $b[$key], 9 );
 						$c->$key = $val;
 						$c->$key->addAttribute( 'type', 'filetype' );

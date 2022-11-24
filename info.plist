@@ -130,6 +130,6 @@ echo $sb-&gt;toxml();
 	<key>version</key>
 	<string></string>
 	<key>webaddress</key>
-	<string>http://finance.qq.com/products/portfolio</string>
+	<string>https://github.com/shjlone/stock-assistant</string>
 </dict>
 </plist>

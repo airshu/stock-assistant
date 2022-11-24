@@ -22,3 +22,6 @@ gp remove zgpa
 gp list
 ```
 
+## Changelog
+
+[2022-11-24] 支持PHP8的修改
