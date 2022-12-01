@@ -20,80 +20,109 @@ class SmartBox extends Workflows
         $this->keyword = $keyword;
     }
 
+    function removeStock()
+    {
+        $cacheData = FileCache::get('__self_select_stock__', $this->cacheDir);
+        foreach ($cacheData as $key => $value) {
+            echo $key;
+            if($key == $this->keyword) {
+                unset($cacheData[$key]);
+                FileCache::set('__self_select_stock__', $cacheData, 0, $this->cacheDir);
+                $this->result(0, '', '移除成功', null, null);
+                return;
+            }
+        }
+    }
+
+    function testStock() 
+    {
+        $this->result(0, 'test test', '添加成功', null, null, false);   
+    }
+
+
+    function addStock()
+    {
+        
+        $result = explode(":", $this->keyword);//ths:sz300033
+        // 构造数据
+        // $url = $this->queryUrl . urlencode($this->keyword);
+        // $request_result = $this->request($url);//根据关键字模糊查询
+        // $json = json_decode($request_result);
+        // $searchData = $json->data;
+        $cacheData = FileCache::get('__self_select_stock__', $this->cacheDir);
+        $cacheData[$result[0]][] = $result[1];//保存
+        // if (count($searchData) > 0) {
+        //     foreach ($searchData as $value) {
+        //         $dCode = $this->getCode($value);
+        //         var_dump($dCode);
+        //         $cacheData[$this->keyword][] = $dCode;
+        //     }
+        // }
+        // var_dump('==============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', $cacheData);
+        $flag = FileCache::set('__self_select_stock__', $cacheData, 0, $this->cacheDir);
+        // var_dump('======+++++++++++++$', $flag);
+        if($flag == True) {
+            $this->result(0, '', '添加成功', null, null);   
+        }
+        
+    }
+
+
+    
+
+    function listStock() 
+    {
+        // echo "start---->>>>>>>>>", $this->cacheDir;
+        $cacheData = FileCache::get('__self_select_stock__', $this->cacheDir);
+        // var_dump($cacheData);
+        // echo "end--->>>>>>>>", is_array($cacheData) ;
+        // return;
+        // var_dump(count($cacheData));
+        $param = [];
+        $searchData = [];        
+        // var_dump($cacheData);
+        if(is_array($cacheData)) {
+            foreach ($cacheData as $key => $value) {
+                // var_dump('>>>>', $key, $value);
+                if(is_array($value)) {
+                    // var_dump('value>>>>', $value);
+                    foreach ($value as $k => $v) {
+                        // var_dump('>>>>>', $k, $v);
+                        array_push($param, $v);
+                        $url = $this->queryUrl . urlencode($key);
+                        $request_result = $this->request($url);
+                        // echo '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', $request_result;
+                        $json = json_decode($request_result, true);
+                        
+                        array_push($searchData, $json);
+                        // return;
+                    }
+                    
+                }
+            }
+        }
+        
+        $qt = new StockQt();
+        $qt->fetchQt(implode(',', $param));
+        foreach ($searchData as $key => $value) {
+            foreach($value as $k => $v) {
+                $stock = new Stock($v[0], $qt);
+                // var_dump($stock->getTitle());
+                // $stock->getLink()
+                $this->result($key, $stock->pinyin, $stock->getTitle(), $stock->getSubTitle(), null);
+            } 
+            
+            
+        }
+
+    }
 
     function search()
     {
-        
-        $keywordArr = explode(' ', $this->keyword);
-        
-        if (in_array($keywordArr[0], ['add', 'list', 'remove'])) {
-            $key = $keywordArr[0];
-            if(isset($keywordArr[1])) {
-                $code = $keywordArr[1];
-            }
-
-            switch ($key) {
-                case 'add':
-                    if(empty($code) || strlen($code) < 4) {
-                        return;
-                    }
-                    $url = $this->queryUrl . urlencode($code);
-                    $request_result = $this->request($url);
-                    $json = json_decode($request_result);
-                    $searchData = $json->data;
-                    $cacheData = FileCache::get('__self_select_stock__', $this->cacheDir);
-                    if (count($searchData) > 0) {
-                        foreach ($searchData as $value) {
-                            $dCode = $this->getCode($value);
-                            $cacheData[$code][] = $dCode;
-                        }
-                    }
-                    
-                    FileCache::set('__self_select_stock__', $cacheData, 0, $this->cacheDir);
-                    $this->result(0, '', '添加成功', null, null);
-                    break;
-                case 'list':
-                    $cacheData = FileCache::get('__self_select_stock__', $this->cacheDir);
-                    $param = [];
-                    $searchData = [];                    
-                    foreach ($cacheData as $key => $value) {
-                        if(is_array($value)) {
-                            foreach ($value as $k => $v) {
-                                array_push($param, $v);
-                                $url = $this->queryUrl . urlencode($key);
-                                $request_result = $this->request($url);
-                                $json = json_decode($request_result);
-                                array_push($searchData, $json->data[0]);
-                            }
-                        }
-                    }
-                    $qt = new StockQt();
-                    $qt->fetchQt(implode(',', $param));
-                    foreach ($searchData as $key => $value) {
-                        $stock = new Stock($value, $qt);
-                        $this->result($key, $stock->getLink(), $stock->getTitle(), $stock->getSubTitle(), null);
-                        
-                    }
-                    return;
-                    break;
-                case 'remove':
-                    $cacheData = FileCache::get('__self_select_stock__', $this->cacheDir);
-                    foreach ($cacheData as $key => $value) {
-
-                        if($key == $code) {
-                            unset($cacheData[$key]);
-                            FileCache::set('__self_select_stock__', $cacheData, 0, $this->cacheDir);
-                            $this->result(0, '', '移除成功', null, null);
-                            return;
-                        }
-                    }
-                    break;
-            }
-            return;
-        }
-
+        //    echo "start=========", $this->keyword;
         $cacheData = FileCache::get('__cache__' . $this->keyword);
-
+        // echo '1111111111111111';
+        //  var_dump($cacheData);
         if (!$cacheData) {
             $url = $this->queryUrl . urlencode($this->keyword);
 
@@ -102,6 +131,7 @@ class SmartBox extends Workflows
             $json = json_decode($request_result);
             $searchData = $json->data;
 
+            // var_dump($url);
             if (count($searchData) > 0) {
                 FileCache::set('__cache__' . $this->keyword, $searchData, 24 * 60 * 60);
             }
@@ -110,9 +140,7 @@ class SmartBox extends Workflows
         }
 
         if (count($searchData) > 0) {
-
             $codeArray = array();
-
             foreach ($searchData as $value) {
                 $dCode = $this->getCode($value);
                 array_push($codeArray, $dCode);
@@ -123,7 +151,9 @@ class SmartBox extends Workflows
 
             foreach ($searchData as $key => $value) {
                 $stock = new Stock($value, $qt);
-                $this->result($key, $stock->getLink(), $stock->getTitle(), $stock->getSubTitle(), null);
+                // var_dump($stock->pinyin, $stock->fullCode, '>>>>>>>>>');
+                $this->result($key, $stock->pinyin . ':' . $stock->fullCode, $stock->getTitle(), $stock->getSubTitle(), null);
+                // $this->result($key, $stock->getLink(), $stock->getTitle(), $stock->getSubTitle(), null);
 
             }
         } else {
@@ -178,7 +208,16 @@ class Stock
 
     function __construct($data, $stockQt)
     {
+        // var_dump('==================2222');
+        // var_dump($data);
+        // var_dump('==================1111');
+
         $result = explode("~", $data);
+
+        // var_dump('==================result start');
+        // var_dump($result);
+        // var_dump('==================result end');
+
         if ($result[0] == 'us') {
             if (preg_match('/(\..*)$/', $result[1], $re)) {
                 $result[1] = str_replace($re[1], "", $result[1]);

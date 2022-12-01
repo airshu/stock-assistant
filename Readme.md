@@ -12,16 +12,21 @@
 //查询某个股票的信息
 gp zgpa
 
-//添加某个股票到自选里面
-gp add zgpa
+通过Command+Enter添加自选
 
-//从自选股中删除某个股票
-gp remove zgpa
 
-//查询自选股的实时信息
+//查询自选的实时信息
 gp list
+
+通过Command+Enter删除自选
+
 ```
 
 ## Changelog
+
+[2022-12-01] 修改交互方式
+
+- 关键字gp xxx 查询对应信息，通过Command+Enter可将对应条目添加到自选
+- 关键字glist 查询自选，通过Command+Enter可将其从自选删除
 
 [2022-11-24] 支持PHP8的修改
