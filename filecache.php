@@ -7,7 +7,7 @@
 final class FileCache
 {
     private static $_iscache = true;
-    private static $_cachedir = '/tmp/';
+    private static $_cachedir = './tmp/';
     private static $_cachetime = 3600;
 
     public static function get($key = false, $d = false)
@@ -23,7 +23,7 @@ final class FileCache
         $data = unserialize($data);
         $time = (int)$data['time'];
         $data = $data['data'];
-        var_dump('#####get: ', $filename, '=========', $data);
+        // var_dump('#####get: ', $filename, '=========', $data);
         return $data;
 //        if ($time > time()) {
 //            return $data;
@@ -32,6 +32,12 @@ final class FileCache
 //        }
     }
 
+    /**
+     * key 文件关键字
+     * value 数据
+     * t 过期时间
+     * d 存储目录
+     */
     public static function set($key = false, $value = false, $t = 0, $d = false)
     {
         if (empty($key) or !self::$_iscache) {
@@ -54,7 +60,7 @@ final class FileCache
             fwrite($handle, $data);
             fclose($handle);
         }
-        var_dump('============set:', $filename, $data);
+        // var_dump('============set:', $filename, $data);
         return true;
     }
 
@@ -75,7 +81,8 @@ final class FileCache
         }
         $dir = empty($d) ? self::$_cachedir : $d;
         $key_md5 = md5($key);
-        $filename = rtrim($dir, '/') . '/' . substr($key_md5, 0, 2) . '/' . substr($key_md5, 2, 2) . '/' . substr($key_md5, 4, 2) . '/' . $key_md5;
+        // '/' . substr($key_md5, 0, 2) . '/' . substr($key_md5, 2, 2) .
+        $filename = rtrim($dir, '/') .  '/' . substr($key_md5, 4, 2) . '/' . $key_md5;
         return $filename;
     }
 

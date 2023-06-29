@@ -18,16 +18,39 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>F3C2C254-93D3-4018-A636-E2906293EA42</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>添加自选</string>
+				<key>vitoclose</key>
+				<true/>
+			</dict>
+		</array>
+		<key>CE5757A0-CBC7-487D-BB8A-DB28CF7874B1</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7899A7BF-D32D-4CEF-83F1-4813066F6A1D</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>删除自选</string>
+				<key>vitoclose</key>
+				<true/>
+			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Shjlong</string>
+	<string>Shjlone</string>
 	<key>description</key>
-	<string>Stock Assistant v0.1</string>
+	<string>Stock Assistant v1.0</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>股票助手</string>
+	<string>Stock Assistant</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -67,11 +90,11 @@
 				<key>keyword</key>
 				<string>gp</string>
 				<key>queuedelaycustom</key>
-				<integer>3</integer>
+				<integer>6</integer>
 				<key>queuedelayimmediatelyinitially</key>
 				<false/>
 				<key>queuedelaymode</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>queuemode</key>
 				<integer>1</integer>
 				<key>runningsubtext</key>
@@ -103,6 +126,113 @@ echo $sb-&gt;toxml();
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>100</integer>
+				<key>script</key>
+				<string>require_once('Stock.php');
+$sb = new SmartBox();
+$sb-&gt;setKeyWord("{query}");
+$sb-&gt;addStock();
+echo $sb-&gt;toxml();</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>F3C2C254-93D3-4018-A636-E2906293EA42</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
+				<string>glist</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>正在查询 ...</string>
+				<key>script</key>
+				<string>require_once('Stock.php');
+$sb = new SmartBox();
+$sb-&gt;listStock();
+echo $sb-&gt;toxml();
+</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>涵盖沪深港美全市场实时行情</string>
+				<key>title</key>
+				<string>查询自选股</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>CE5757A0-CBC7-487D-BB8A-DB28CF7874B1</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>100</integer>
+				<key>script</key>
+				<string>require_once('Stock.php');
+$sb = new SmartBox();
+$sb-&gt;setKeyWord("{query}");
+$sb-&gt;removeStock();
+echo $sb-&gt;toxml();</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>7899A7BF-D32D-4CEF-83F1-4813066F6A1D</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>All information provided "as is" for informational purposes only, not intended for trading purposes or advice. Neither Tencent nor any of independent providers is liable for any informational errors, incompleteness, or delays, or for any actions taken in reliance on information contained herein. By accessing the Tencent site, you agree not to redistribute the information found therein.
@@ -115,20 +245,41 @@ echo $sb-&gt;toxml();
 			<key>xpos</key>
 			<integer>300</integer>
 			<key>ypos</key>
-			<real>90</real>
+			<integer>90</integer>
+		</dict>
+		<key>7899A7BF-D32D-4CEF-83F1-4813066F6A1D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>310</integer>
+			<key>ypos</key>
+			<integer>290</integer>
 		</dict>
 		<key>9A74E528-8196-496E-859B-372ED29F9019</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<integer>575</integer>
 			<key>ypos</key>
-			<real>90</real>
+			<integer>10</integer>
+		</dict>
+		<key>CE5757A0-CBC7-487D-BB8A-DB28CF7874B1</key>
+		<dict>
+			<key>xpos</key>
+			<integer>85</integer>
+			<key>ypos</key>
+			<integer>280</integer>
+		</dict>
+		<key>F3C2C254-93D3-4018-A636-E2906293EA42</key>
+		<dict>
+			<key>xpos</key>
+			<integer>580</integer>
+			<key>ypos</key>
+			<integer>205</integer>
 		</dict>
 	</dict>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string></string>
+	<string>1.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/shjlone/stock-assistant</string>
 </dict>
